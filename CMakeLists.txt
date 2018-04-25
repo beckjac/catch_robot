@@ -10,6 +10,7 @@ project(catch_robot)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
+  ar_track_alvar
 )
 
 ## System dependencies are found with CMake's conventions
