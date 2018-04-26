@@ -10,10 +10,14 @@ import RPi.GPIO as gpio
 gpio.setmode(gpio.BOARD)
 
 # Constants
-PULSE = 13
-DIRECTION = 15
-DELAY = 0.020
-INCREMENT = pi/4000
+ENABLE = 11
+DIRECTION = 13
+PULSE = 15
+
+DELAY = 0.010
+INCREMENT = pi/400
+
+TARGET_ID = 0
 
 class Stepper:
     def __init__(self, name='stepper'):
@@ -21,6 +25,9 @@ class Stepper:
         self.angle = pi/2;
         
         # Configure IO
+        gpio.setup(ENABLE, gpio.OUT)
+        gpio.output(ENABLE, gpio.HIGH)
+        
         gpio.setup(PULSE, gpio.OUT)
         gpio.setup(DIRECTION, gpio.OUT)
         
@@ -31,17 +38,21 @@ class Stepper:
         return
     
     def get_pose(self, msg):
-        # Check the message is not empty
-        if len(msg.markers) == 0:
-            return
+        # Check the message contents
+        pos = None
+        for marker in msg.markers:
+            if marker.id == TARGET_ID:
+                pos = marker.pose.pose.position
+                break
         
-        # Get pose data
-        marker = msg.markers[0]
-        pos = marker.pose.pose.position
+        if pos == None:
+            return
         
         # Calculate new angle
         azimuth = atan2(pos.z, pos.x)
+        rospy.loginfo("Moving to " + str(azimuth))
         self.rotate_to(azimuth)
+        rospy.loginfo("Reached " + str(self.angle))
         
         return
     
