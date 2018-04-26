@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from math import atan2, pi
+from time import sleep
 
 import rospy
 from ar_track_alvar_msgs.msg import AlvarMarkers
@@ -8,14 +9,16 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 import RPi.GPIO as gpio
 
 gpio.setmode(gpio.BOARD)
+gpio.setwarnings(False)
 
 # Constants
 ENABLE = 11
 DIRECTION = 13
 PULSE = 15
 
-DELAY = 0.010
+DELAY = 0.002
 INCREMENT = pi/400
+TOLERANCE = pi/100
 
 TARGET_ID = 0
 
@@ -50,9 +53,8 @@ class Stepper:
         
         # Calculate new angle
         azimuth = atan2(pos.z, pos.x)
-        rospy.loginfo("Moving to " + str(azimuth))
-        self.rotate_to(azimuth)
-        rospy.loginfo("Reached " + str(self.angle))
+        if abs(azimuth - self.angle) > TOLERANCE:
+            self.rotate_to(azimuth)
         
         return
     
@@ -61,9 +63,9 @@ class Stepper:
             gpio.output(DIRECTION, gpio.HIGH)
             
             gpio.output(PULSE, gpio.HIGH)
-            rospy.sleep(DELAY)
+            sleep(DELAY)
             gpio.output(PULSE, gpio.LOW)
-            rospy.sleep(DELAY)
+            sleep(DELAY)
             
             self.angle += INCREMENT
         
@@ -71,9 +73,9 @@ class Stepper:
             gpio.output(DIRECTION, gpio.LOW)
             
             gpio.output(PULSE, gpio.HIGH)
-            rospy.sleep(DELAY)
+            sleep(DELAY)
             gpio.output(PULSE, gpio.LOW)
-            rospy.sleep(DELAY)
+            sleep(DELAY)
             
             self.angle -= INCREMENT
         
