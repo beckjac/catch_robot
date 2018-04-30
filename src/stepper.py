@@ -18,15 +18,12 @@ PULSE = 15
 
 DELAY = 0.002
 INCREMENT = pi/400
-TOLERANCE = pi/100
+TOLERANCE = pi/200
 
 TARGET_ID = 0
 
 class Stepper:
     def __init__(self, name='stepper'):
-        # Member variables
-        self.angle = pi/2;
-        
         # Configure IO
         gpio.setup(ENABLE, gpio.OUT)
         gpio.output(ENABLE, gpio.HIGH)
@@ -52,32 +49,28 @@ class Stepper:
             return
         
         # Calculate new angle
-        azimuth = atan2(pos.z, pos.x)
-        if abs(azimuth - self.angle) > TOLERANCE:
-            self.rotate_to(azimuth)
+        azimuth = atan2(pos.z, pos.x) - pi/2
+        if abs(azimuth) > TOLERANCE:
+            if azimuth > 0:
+                self.rotate_by(INCREMENT)
+            else:
+                self.rotate_by(-INCREMENT)
         
         return
     
-    def rotate_to(self, angle):
-        while self.angle < angle:
+    def rotate_by(self, angle):
+        # TODO: Implement acceleration
+        steps = int(abs(angle)/INCREMENT);
+        if angle > 0:
             gpio.output(DIRECTION, gpio.HIGH)
-            
-            gpio.output(PULSE, gpio.HIGH)
-            sleep(DELAY)
-            gpio.output(PULSE, gpio.LOW)
-            sleep(DELAY)
-            
-            self.angle += INCREMENT
-        
-        while self.angle > angle:
+        else:
             gpio.output(DIRECTION, gpio.LOW)
-            
+        
+        for step in xrange(steps):
             gpio.output(PULSE, gpio.HIGH)
             sleep(DELAY)
             gpio.output(PULSE, gpio.LOW)
             sleep(DELAY)
-            
-            self.angle -= INCREMENT
         
         return
     
