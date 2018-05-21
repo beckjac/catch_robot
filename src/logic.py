@@ -8,6 +8,9 @@ FRIENDLY_ID = 0
 ENEMY_ID = 1
 
 def main():
+    aim_pub = rospy.Publisher('firing_solution', Point, queue_size=1)
+    fire_pub = rospy.Publisher('fire', Empty, queue_size=1)
+    
     # Notification of ball
     while not ball_ready:
         sleep(0.1)
@@ -26,6 +29,7 @@ def main():
     fire_pub.publish()
     
     # Return to catching pose
+    aim_pub.publish()
     
 
 if __name__ == '__main__':

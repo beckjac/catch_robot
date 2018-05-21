@@ -4,7 +4,6 @@ from math import atan2, pi
 from time import sleep
 
 import rospy
-from ar_track_alvar_msgs.msg import AlvarMarkers
 
 import RPi.GPIO as gpio
 
@@ -80,6 +79,35 @@ class BaseStepper:
     def run(self):
         rospy.spin()
         return
+
+def aim(msg):
+    # Lay in azimuth
+    msg.data.x
+    
+    # Lay in elevation
+    msg.data.y
+    
+    return
+
+def main():
+    # Setup gpio
+    gpio.setmode(gpio.BOARD)
+    gpio.setwarnings(False)
+    
+    gpio.setup(AZIMUTH_ENABLE, gpio.OUT)
+    gpio.setup(AZIMUTH_DIRECTION, gpio.OUT)
+    gpio.setup(AZIMUTH_PULSE, gpio.OUT)
+    gpio.setup(ELEVATION_ENABLE, gpio.OUT)
+    gpio.setup(ELEVATION_DIRECTION, gpio.OUT)
+    gpio.setup(ELEVATION_PULSE, gpio.OUT)
+    
+    gpio.output(AZIMUTH_ENABLE, gpio.HIGH)
+    gpio.output(ELEVATION_ENABLE, gpio.HIGH)
+    
+    # Create callback
+    rospy.init_node('aimer')
+    rospy.Subscriber('firing_solution', Point, aim, queue_size=1)
+    
     
 if __name__ == '__main__':
     stepper = Stepper()
