@@ -12,17 +12,19 @@ gpio.setmode(gpio.BOARD)
 gpio.setwarnings(False)
 
 # Constants
-ENABLE = 11
-DIRECTION = 13
-PULSE = 15
+AZIMUTH_ENABLE = 11
+AZIMUTH_DIRECTION = 13
+AZIMUTH_PULSE = 15
+
+ELEVATION_ENABLE = 11
+ELEVATION_DIRECTION = 13
+ELEVATION_PULSE = 15
 
 DELAY = 0.002
 INCREMENT = pi/400
 TOLERANCE = pi/200
 
-TARGET_ID = 0
-
-class Stepper:
+class BaseStepper:
     def __init__(self, name='stepper'):
         # Configure IO
         gpio.setup(ENABLE, gpio.OUT)
@@ -48,6 +50,7 @@ class Stepper:
         if pos == None:
             return
         
+        # TODO: implement antagonist behaviour
         # Calculate new angle
         azimuth = atan2(pos.z, pos.x) - pi/2
         if abs(azimuth) > TOLERANCE:
