@@ -3,7 +3,7 @@
 from time import time, sleep
 
 import rospy
-from std_msgs.msg import Empty
+from std_msgs.msg import Float32
 
 import RPi.GPIO as gpio
 
@@ -48,7 +48,7 @@ def main():
     
     # Create publisher
     rospy.init_node('ball_detector')
-    pub = rospy.Publisher('ball_detected', Int32, queue_size=1)
+    pub = rospy.Publisher('ball_detected', Float32, queue_size=1)
     
     # Keep alive
     rate = rospy.Rate(RATE)

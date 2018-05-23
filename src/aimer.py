@@ -23,40 +23,19 @@ DELAY = 0.002
 INCREMENT = pi/400
 TOLERANCE = pi/200
 
-class BaseStepper:
-    def __init__(self, name='stepper'):
-        # Configure IO
-        gpio.setup(ENABLE, gpio.OUT)
-        gpio.output(ENABLE, gpio.HIGH)
+class Stepper():
+    def __init__(self, enable_pin, direction_pin, pulse_pin):
+        self.enable = enable_pin
+        self.direction = direction_pin
+        self.pulse = pulse_pin
         
-        gpio.setup(PULSE, gpio.OUT)
-        gpio.setup(DIRECTION, gpio.OUT)
+        gpio.setup(self.enable, gpio.OUT)
+        gpio.setup(self.direction, gpio.OUT)
+        gpio.setup(self.pulse, gpio.OUT)
         
-        # Configure ROS
-        rospy.init_node(name)
-        rospy.Subscriber('ar_pose_marker', AlvarMarkers, self.get_pose, queue_size=1)
+        gpio.output(self.enable, gpio.HIGH)
         
-        return
-    
-    def get_pose(self, msg):
-        # Check the message contents
-        pos = None
-        for marker in msg.markers:
-            if marker.id == TARGET_ID:
-                pos = marker.pose.pose.position
-                break
-        
-        if pos == None:
-            return
-        
-        # TODO: implement antagonist behaviour
-        # Calculate new angle
-        azimuth = atan2(pos.z, pos.x) - pi/2
-        if abs(azimuth) > TOLERANCE:
-            if azimuth > 0:
-                self.rotate_by(INCREMENT)
-            else:
-                self.rotate_by(-INCREMENT)
+        self.steps = 0
         
         return
     
@@ -64,51 +43,48 @@ class BaseStepper:
         # TODO: Implement acceleration
         steps = int(abs(angle)/INCREMENT);
         if angle > 0:
-            gpio.output(DIRECTION, gpio.HIGH)
+            gpio.output(self.direction, gpio.HIGH)
+            self.steps += steps
         else:
-            gpio.output(DIRECTION, gpio.LOW)
+            gpio.output(self.direction, gpio.LOW)
+            self.steps -= steps
         
         for step in xrange(steps):
-            gpio.output(PULSE, gpio.HIGH)
+            gpio.output(self.pulse, gpio.HIGH)
             sleep(DELAY)
-            gpio.output(PULSE, gpio.LOW)
+            gpio.output(self.pulse, gpio.LOW)
             sleep(DELAY)
         
         return
     
-    def run(self):
-        rospy.spin()
+    def rotate_to(self, angle):
+        diff = angle - self.steps*INCREMENT
+        self.rotate_by(diff)
         return
+
+azimuth = Stepper(AZIMUTH_ENABLE, AZIMUTH_DIRECTION, AZIMUTH_PULSE)
+elevation = Stepper(ELEVATION_ENABLE, ELEVATION_DIRECTION, ELEVATION_PULSE)
 
 def aim(msg):
     # Lay in azimuth
-    msg.data.x
+    azimuth.rotate_by(msg.x)
     
     # Lay in elevation
-    msg.data.y
+    elevation.rotate_by(msg.y)
     
     return
 
 def main():
-    # Setup gpio
-    gpio.setmode(gpio.BOARD)
-    gpio.setwarnings(False)
-    
-    gpio.setup(AZIMUTH_ENABLE, gpio.OUT)
-    gpio.setup(AZIMUTH_DIRECTION, gpio.OUT)
-    gpio.setup(AZIMUTH_PULSE, gpio.OUT)
-    gpio.setup(ELEVATION_ENABLE, gpio.OUT)
-    gpio.setup(ELEVATION_DIRECTION, gpio.OUT)
-    gpio.setup(ELEVATION_PULSE, gpio.OUT)
-    
-    gpio.output(AZIMUTH_ENABLE, gpio.HIGH)
-    gpio.output(ELEVATION_ENABLE, gpio.HIGH)
-    
     # Create callback
     rospy.init_node('aimer')
+    
     rospy.Subscriber('firing_solution', Point, aim, queue_size=1)
+    
+    # Keep alive
+    rospy.spin()
+    
+    return
     
     
 if __name__ == '__main__':
-    stepper = Stepper()
-    stepper.run()
+    main()
