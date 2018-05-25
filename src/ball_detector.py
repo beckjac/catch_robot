@@ -11,7 +11,7 @@ import RPi.GPIO as gpio
 TRIG = 10
 ECHO = 12
 
-THRESHOLD = # cm
+THRESHOLD = 10# cm
 RATE = 10 # Hz
 
 def sense(pub):
@@ -21,10 +21,12 @@ def sense(pub):
     gpio.output(TRIG, gpio.LOW)
     
     # Listen for echo pulse
-    while gpio.input(TRIG) == gpio.LOW:
+    start = time()
+    while gpio.input(ECHO) == gpio.LOW:
         start = time()
     
-    while gpio.input(TRIG) == gpio.HIGH:
+    stop = time()
+    while gpio.input(ECHO) == gpio.HIGH:
         stop = time()
     
     # Calculate range

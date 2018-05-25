@@ -13,8 +13,8 @@ FIRE_ENABLE = 3
 FIRE_DIRECTION = 5
 FIRE_PULSE = 7
 
-DELAY = 0.002
-INCREMENT = pi/400
+DELAY = 0.01
+INCREMENT = pi/200
 
 def fire(msg):
     # Spin the firing stepper one rotation
@@ -39,7 +39,7 @@ def main():
     gpio.setup(FIRE_PULSE, gpio.OUT)
     
     gpio.output(FIRE_ENABLE, gpio.HIGH)
-    gpio.output(FIRE_DIRECTION, gpio.HIGH)
+    gpio.output(FIRE_DIRECTION, gpio.LOW)
     
     # Create callback
     rospy.init_node('slingshot')
