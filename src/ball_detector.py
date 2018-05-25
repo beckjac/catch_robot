@@ -8,8 +8,8 @@ from std_msgs.msg import Float32
 import RPi.GPIO as gpio
 
 # Constants
-ECHO = 
-TRIG = 
+TRIG = 10
+ECHO = 12
 
 THRESHOLD = # cm
 RATE = 10 # Hz
