@@ -9,9 +9,9 @@ from std_msgs.msg import Empty
 import RPi.GPIO as gpio
 
 # Constants
-FIRE_ENABLE = 11
-FIRE_DIRECTION = 13
-FIRE_PULSE = 15
+FIRE_ENABLE = 3
+FIRE_DIRECTION = 5
+FIRE_PULSE = 7
 
 DELAY = 0.002
 INCREMENT = pi/400
