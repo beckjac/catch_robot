@@ -1,0 +1,6 @@
+<launch>
+  
+  <!-- Launch slingshot -->
+  <node pkg="catch_robot" type="cannon.py" name="cannon" output="screen"/>
+
+</launch>

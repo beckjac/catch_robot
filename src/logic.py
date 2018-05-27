@@ -12,7 +12,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 BALL_THRESH = 10# cm
 
 AIM_TIME = 5
-FIRE_TIME = 10
+FIRE_TIME = 3
 
 FRIENDLY_ID = 0
 ENEMY_ID = 1
@@ -50,7 +50,7 @@ class Logic():
         return
     
     def calculate_elevation(self, target_range):
-        return pi/4
+        return pi/10
     
     def run(self):
         # Main loop
@@ -76,7 +76,7 @@ class Logic():
             elif player_id == ENEMY_ID:
                 # Aim away
                 azimuth = 0 # Away
-                elevation = pi/4
+                elevation = pi/10
             else:
                 # This shouldn't happen, since the callback filters
                 rospy.logerr("Invalid tag ID: {}".format(self.player_id))
