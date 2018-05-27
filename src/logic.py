@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from math import pi
+
 import rospy
 from std_msgs.msg import Float32, Empty
 from geometry_msgs.msg import Point
@@ -28,6 +30,10 @@ def get_pose(msg):
             break
     return
 
+def calculate_elevation(target_range):
+    
+    return pi/4
+
 def main():
     # Init node
     rospy.init_node('logic')
@@ -55,9 +61,11 @@ def main():
         if player_id == FRIENDLY_ID:
             # Aim at
             azimuth = atan2(player_pose.z, player_pose.x) - pi/2
-            elevation = 0
+            elevation = calculate_elevation(player_pose.z)
         elif player_id == ENEMY_ID:
             # Aim away
+            azimuth = 0 # Away
+            elevation = pi/4
         else:
             # This shouldn't happen, since the callback filters
             rospy.logerr("Invalid tag ID: {}".format(player_id))
@@ -74,8 +82,12 @@ def main():
         fire_pub.publish()
         
         # Return to catching pose
-        aim_pub.publish()
-        ball_ready = False
+        msg = Point()
+        msg.x = 0
+        msg.y = 0
+        
+        aim_pub.publish(msg)
+        sleep(AIM_TIME)
 
 if __name__ == '__main__':
     main()

@@ -67,10 +67,10 @@ elevation = Stepper(ELEVATION_ENABLE, ELEVATION_DIRECTION, ELEVATION_PULSE)
 
 def aim(msg):
     # Lay in azimuth
-    azimuth.rotate_by(msg.x)
+    azimuth.rotate_to(msg.x)
     
     # Lay in elevation
-    elevation.rotate_by(msg.y)
+    elevation.rotate_to(msg.y)
     
     return
 
