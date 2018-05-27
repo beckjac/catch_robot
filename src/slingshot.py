@@ -18,7 +18,7 @@ INCREMENT = 2*pi/1600
 
 def fire(msg):
     # Spin the firing stepper one rotation
-    angle = pi/2
+    angle = 2*pi
     steps = int(angle/INCREMENT);
     
     for step in xrange(steps):
