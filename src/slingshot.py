@@ -14,11 +14,11 @@ FIRE_DIRECTION = 5
 FIRE_PULSE = 7
 
 DELAY = 0.01
-INCREMENT = pi/200
+INCREMENT = 2*pi/1600
 
 def fire(msg):
     # Spin the firing stepper one rotation
-    angle = 2*pi
+    angle = pi/2
     steps = int(angle/INCREMENT);
     
     for step in xrange(steps):

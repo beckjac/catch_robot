@@ -11,7 +11,6 @@ import RPi.GPIO as gpio
 TRIG = 10
 ECHO = 12
 
-THRESHOLD = 10# cm
 RATE = 10 # Hz
 
 def sense(pub):
@@ -33,8 +32,7 @@ def sense(pub):
     dist = (stop - start)*34300/2 # Speed of sound 34300 cm/s
     
     # Send
-    if dist < THRESHOLD:
-        pub.publish(dist)
+    pub.publish(dist)
     
     return
 

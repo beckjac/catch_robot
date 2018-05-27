@@ -4,6 +4,7 @@ from math import atan2, pi
 from time import sleep
 
 import rospy
+from geometry_msgs.msg import Point
 
 import RPi.GPIO as gpio
 
@@ -20,8 +21,8 @@ ELEVATION_DIRECTION = 13
 ELEVATION_PULSE = 15
 
 DELAY = 0.005
-INCREMENT = pi/400
-TOLERANCE = pi/200
+INCREMENT = 2*pi/1600
+TOLERANCE = 2*INCREMENT
 
 class Stepper():
     def __init__(self, enable_pin, direction_pin, pulse_pin):

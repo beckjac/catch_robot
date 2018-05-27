@@ -1,0 +1,30 @@
+<launch>
+  <!-- Open webcam -->
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam_node">
+    <param name="pixel_format" value="yuyv"/>
+    <param name="camera_info_url" value="file://$(find catch_robot)/config/webcam.yaml"/>
+  </node>
+  
+  <!-- Publish TF linking camera to world -->
+  <node pkg="tf" type="static_transform_publisher" name="static_tf" args="0 0 0 0 0 0 1 map head_camera 10"/>
+  
+  <!-- Launch AR tag package -->
+  <node pkg="ar_track_alvar" type="individualMarkersNoKinect" name="ar_tracker">
+    <remap from="camera_image" to="/usb_cam_node/image_raw"/>
+    <remap from="camera_info" to="/usb_cam_node/camera_info"/>
+    <param name="output_frame" value="/head_camera"/>
+  </node>
+  
+  <!-- Launch slingshot -->
+  <node pkg="catch_robot" type="slingshot.py" name="slingshot" output="screen"/>
+  
+  <!-- Launch detector -->
+  <node pkg="catch_robot" type="ball_detector.py" name="ball_detector" output="screen"/>
+  
+  <!-- Launch aimer -->
+  <node pkg="catch_robot" type="aimer.py" name="aimer" output="screen"/>
+  
+  <!-- Launch logic -->
+  <node pkg="catch_robot" type="logic.py" name="logic" output="screen"/>
+
+</launch>
