@@ -20,7 +20,7 @@ ELEVATION_ENABLE = 11
 ELEVATION_DIRECTION = 13
 ELEVATION_PULSE = 15
 
-DELAY = 0.005
+DELAY = 0.01
 INCREMENT = 2*pi/1600
 TOLERANCE = 2*INCREMENT
 
@@ -43,6 +43,10 @@ class Stepper():
     def rotate_by(self, angle):
         # TODO: Implement acceleration
         steps = int(abs(angle)/INCREMENT);
+        if steps == float('NaN'):
+            rospy.logwarn("Got NaN as angle. Ignoring.")
+            return
+            
         if angle > 0:
             gpio.output(self.direction, gpio.HIGH)
             self.steps += steps
